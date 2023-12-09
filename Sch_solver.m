@@ -26,6 +26,10 @@ function schrodingerSolver()
     V = zeros(N, 1);
     V_inf = 1e9 * e;
 
+    %theoritical energies from the analytic formula
+    theoreticalEnergies = zeros(numEigenvaluesToPlot, 1);
+
+
     if V_type == 1 % Infinite Square Well
         V0_eV=V_inf;
         V(:) = 0; 
@@ -51,6 +55,18 @@ function schrodingerSolver()
     [psi, E] = eig(H);
     energies_eV = diag(E) / e; % Convert the energies from J to eV for output
 
+    % Calculate theoretical energies for Infinite Square Well and Harmonic Oscillator
+    if V_type == 1 % Infinite Square Well
+        for n = 1:numEigenvaluesToPlot
+            theoreticalEnergies(n) = (n^2 * pi^2 * hbar^2) / (2 * m * L^2) / e; % Convert to eV
+        end
+    elseif V_type == 3 % Harmonic Oscillator
+        omega = sqrt(k / m); % Angular frequency
+        for n = 1:numEigenvaluesToPlot
+            theoreticalEnergies(n) = (n - 0.5) * hbar * omega / e; % Convert to eV
+        end
+    end
+
     % Plot the eigenenergies
     figure;
     hold on;
@@ -64,6 +80,41 @@ function schrodingerSolver()
     end
     hold off;
 
+    % Display calculated and theoretical energies
+    if V_type == 1 || V_type == 3 || V_type == 2
+        disp('Quantum Well Specifications:');
+        fprintf('Well Type: %s\n', getWellType(V_type));
+        fprintf('Width of the Well (nm): %.2f\n', L_nm);
+        if V_type == 2 % Finite Square Well
+            fprintf('Height of the Well (eV): %.2f\n', V0_eV);
+        elseif V_type == 3 % Harmonic Oscillator
+            fprintf('Spring Constant (eV/nm^2): %.2f\n', k_eV_per_nm2);
+        end
+        fprintf('Effective Mass (ratio to electron mass): %.2f\n', m_eff);
+        fprintf('Number of Grid Points: %d\n', N);
+
+        disp('Calculated and Theoretical Energies (eV):');
+        for i = 1:numEigenvaluesToPlot
+            fprintf('n = %d: Calculated = %.4f eV, Theoretical = %.4f eV\n', ...
+                    i, energies_eV(i), theoreticalEnergies(i));
+        end
+    end
+
+    % Helper function to get the well type as a string
+    function wellType = getWellType(typeNum)
+        switch typeNum
+            case 1
+                wellType = 'Infinite Square Well';
+            case 2
+                wellType = 'Finite Square Well';
+            case 3
+                wellType = 'Harmonic Oscillator';
+            otherwise
+                wellType = 'Unknown';
+        end
+    end
+
+
     % Plot the potential V(x) and eigenfunctions psi(x)
     figure;
     hold on;
@@ -75,7 +126,7 @@ function schrodingerSolver()
        
     % Plot the potential for the harmonic oscillator
     if V_type == 3
-        %psi = abs(psi);
+        psi = abs(psi);
         plot(x * 1e9, V / e, 'k-', 'LineWidth', 2, 'DisplayName', 'Potential');
     end
 
