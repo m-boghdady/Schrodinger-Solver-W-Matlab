@@ -22,5 +22,5 @@ Run the `schrodingerSolver` function in MATLAB. Follow the prompts to input the 
 The script uses fundamental constants like reduced Planck's constant, elementary charge, and electron mass for its calculations. It employs numerical methods to solve the eigenvalue problem of the Hamiltonian matrix, constructed using finite differences. The potential V is set according to the user's choice of well type, and eigenenergies are calculated in electron volts (eV). The script also includes a helper function `getWellType` to convert the well type numeric input into a readable string format.
 
 ## Note
-This project is ideal for educational purposes and offers a practical approach to understanding quantum mechanics solutions.
+This project is ideal for educational and research purposes and offers a practical approach to understanding quantum mechanics solutions.
 
